@@ -5,46 +5,45 @@ import Categories from '../components/Categories';
 import Carousell from '../components/Carousell';
 import CarousellItem from '../components/CarousellItem';
 import Footer from '../components/Footer';
+import useInitialState from '../hooks/useInitialState';
 
 import '../assets/styles/App.scss';
 
+const API = 'http://localhost:3000/initalState'
+
 const App = () =>{
-    const [ videos , setVideos] = useState([]);
-    
-    useEffect(()=>{
-        //prender servidor --json-server initialState.json  
-        fetch("http://localhost:3000/initalState")
-            .then(response => response.json())
-            .then(data => setVideos(data));
-    },[]);
-    console.log(videos)
+    const initialState = useInitialState(API);
+     
     return(
         <div className= "App">
             <Header></Header>   
             
             <Search></Search>
+            {initialState.mylist.length > 0 &&( 
             
-            <Categories title =" Mi lista">
-                <Carousell>
-                    <CarousellItem></CarousellItem>
-                    <CarousellItem></CarousellItem>
-                    <CarousellItem></CarousellItem>
-                    <CarousellItem></CarousellItem>
-                    <CarousellItem></CarousellItem>
-                    <CarousellItem></CarousellItem>
-                    <CarousellItem></CarousellItem>
-                
-                </Carousell>
-            </Categories>
+                <Categories title =" Mi lista">
+                         <Carousell>
+                        {initialState.mylist.map( items => 
+                            <CarousellItem key={item.id}{...item}></CarousellItem>
+                        )}
+                    </Carousell>       
+                </Categories>
+            )}
+            
             <Categories title =" Tendecias">
                 <Carousell>
-                    <CarousellItem></CarousellItem>
-                    <CarousellItem></CarousellItem>   
+                    { initialState.trends.map(item =>
+                     <CarousellItem key={item.id}{...item} ></CarousellItem>
+                    )}          
                 </Carousell>
             </Categories>
+
             <Categories title =" Originales de platzi video">
                 <Carousell>
-                    <CarousellItem></CarousellItem>   
+                    {initialState.originals.map(item =>
+                    <CarousellItem key ={item.id}{...item}></CarousellItem>   
+                    )}
+                    
                 </Carousell>
             </Categories>
             <Footer></Footer>
